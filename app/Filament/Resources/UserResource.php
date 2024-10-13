@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Forms\Actions\GeneratePasswordAction;
 use App\Filament\Resources\UserResource\Pages;
 use App\Models\User;
 use BezhanSalleh\FilamentShield\Resources\RoleResource;
@@ -43,7 +44,8 @@ class UserResource extends Resource
                     ->required(fn (string $operation) => $operation === 'create')
                     ->rule(Password::default())
                     ->revealable()
-                    ->dehydrated(fn (?string $state): bool => filled($state)),
+                    ->dehydrated(fn (?string $state): bool => filled($state))
+                    ->suffixAction(GeneratePasswordAction::make()),
 
                 Forms\Components\Select::make('roles')
                     ->relationship('roles', 'name')
@@ -68,6 +70,9 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('email_verified_at')
                     ->dateTime()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('roles.name')
+                    ->badge()
+                    ->formatStateUsing(fn ($state) => str($state)->headline()),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -109,9 +114,7 @@ class UserResource extends Resource
     {
         return [
             'index' => Pages\ListUsers::route('/'),
-            // 'create' => Pages\CreateUser::route('/create'),
             'view' => Pages\ViewUser::route('/{record}'),
-            // 'edit' => Pages\EditUser::route('/{record}/edit'),
         ];
     }
 
