@@ -4,14 +4,20 @@ namespace App\Providers\Filament;
 
 use App\Filament\Pages\Auth\Login;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
+use Filament\Forms\Components\Field;
+use Filament\Forms\Components\Placeholder;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Infolists\Components\Entry;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use Filament\Tables\Columns\Column;
+use Filament\Tables\Filters\BaseFilter;
+use Filament\Tables\Table;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -65,5 +71,23 @@ class AdminPanelProvider extends PanelProvider
             ->plugins([
                 FilamentShieldPlugin::make(),
             ]);
+    }
+
+    public function boot(): void
+    {
+        $this->translateComponentsLabel();
+
+        Table::configureUsing(function (Table $table): void {
+            $table->paginationPageOptions([10, 20, 30, 50]);
+        });
+    }
+
+    private function translateComponentsLabel(): void
+    {
+        foreach ([Field::class, BaseFilter::class, Placeholder::class, Column::class, Entry::class] as $component) {
+            $component::configureUsing(function ($translatable): void {
+                $translatable->translateLabel();
+            });
+        }
     }
 }
