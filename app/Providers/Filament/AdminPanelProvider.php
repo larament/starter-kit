@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Pages\Auth\Login;
+use Awcodes\Curator\CuratorPlugin;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Placeholder;
@@ -10,6 +11,7 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Infolists\Components\Entry;
+use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages;
 use Filament\Panel;
@@ -68,8 +70,13 @@ class AdminPanelProvider extends PanelProvider
                     ->url('/', true)
                     ->icon('heroicon-o-arrow-right-circle'),
             ])
+            ->navigationGroups([
+                NavigationGroup::make(__('Content')),
+                NavigationGroup::make(__('System')),
+            ])
             ->plugins([
                 FilamentShieldPlugin::make(),
+                CuratorPlugin::make(),
             ]);
     }
 
